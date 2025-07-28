@@ -1,40 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Design system para Mídia Moment - Tons de rosa elegantes */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Paleta principal em tons de rosa */
+    --background: 355 100% 98%;
+    --foreground: 340 87% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 340 87% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 340 87% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 340 82% 52%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 340 82% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 330 85% 92%;
+    --secondary-foreground: 340 87% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 330 85% 95%;
+    --muted-foreground: 340 45% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 315 85% 88%;
+    --accent-foreground: 340 87% 15%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 330 85% 90%;
+    --input: 330 85% 92%;
+    --ring: 340 82% 52%;
+
+    /* Gradientes elegantes */
+    --gradient-primary: linear-gradient(135deg, hsl(340, 82%, 52%), hsl(315, 75%, 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(330, 85%, 95%), hsl(340, 85%, 92%));
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(330, 85%, 98%));
+
+    /* Sombras com tons de rosa */
+    --shadow-elegant: 0 10px 30px -10px hsl(340, 82%, 52%, 0.2);
+    --shadow-soft: 0 4px 20px -5px hsl(340, 82%, 52%, 0.15);
+    --shadow-glow: 0 0 40px hsl(340, 82%, 65%, 0.3);
+
+    /* Transições suaves */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.5rem;
 
@@ -100,6 +116,43 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-serif;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-script {
+    font-family: 'Dancing Script', cursive;
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-spring {
+    transition: var(--transition-spring);
   }
 }
