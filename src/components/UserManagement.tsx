@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Plus, Trash2, Edit, Mail, Phone } from "lucide-react";
+import { Users, Plus, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,8 +26,6 @@ import { useToast } from "@/hooks/use-toast";
 interface User {
   id: string;
   name: string;
-  email: string;
-  phone: string | null;
   role: string;
 }
 
@@ -40,8 +38,6 @@ interface UserManagementProps {
 
 interface UserFormData {
   name: string;
-  email: string;
-  phone: string;
   role: string;
 }
 
@@ -50,9 +46,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState<UserFormData>({
     name: "",
-    email: "",
-    phone: "",
-    role: "employee",
+    role: "social_media",
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -60,9 +54,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
   const resetForm = () => {
     setFormData({
       name: "",
-      email: "",
-      phone: "",
-      role: "employee",
+      role: "social_media",
     });
     setEditingUser(null);
     setShowForm(false);
@@ -71,8 +63,6 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
   const handleEdit = (user: User) => {
     setFormData({
       name: user.name,
-      email: user.email,
-      phone: user.phone || "",
       role: user.role,
     });
     setEditingUser(user);
@@ -82,10 +72,10 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name.trim() || !formData.email.trim()) {
+    if (!formData.name.trim()) {
       toast({
         title: "Erro de validação",
-        description: "Nome e email são obrigatórios.",
+        description: "Nome é obrigatório.",
         variant: "destructive",
       });
       return;
@@ -96,8 +86,6 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
     try {
       const userData = {
         name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim() || null,
         role: formData.role,
       };
 
@@ -128,10 +116,10 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
 
       resetForm();
       onUserUpdated();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Erro ao salvar usuário",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Erro desconhecido",
         variant: "destructive",
       });
     } finally {
@@ -156,10 +144,10 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
       });
 
       onUserUpdated();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Erro ao remover usuário",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Erro desconhecido",
         variant: "destructive",
       });
     }
@@ -169,8 +157,8 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
     switch (role) {
       case 'manager':
         return 'Gerente';
-      case 'employee':
-        return 'Funcionário';
+      case 'social_media':
+        return 'Social Media';
       default:
         return role;
     }
@@ -180,7 +168,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
     switch (role) {
       case 'manager':
         return 'bg-primary text-primary-foreground';
-      case 'employee':
+      case 'social_media':
         return 'bg-secondary text-secondary-foreground';
       default:
         return 'bg-muted text-muted-foreground';
@@ -227,16 +215,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
                             {getRoleLabel(user.role)}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Mail className="h-4 w-4" />
-                          <span>{user.email}</span>
-                        </div>
-                        {user.phone && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="h-4 w-4" />
-                            <span>{user.phone}</span>
-                          </div>
-                        )}
+
                       </div>
                       <div className="flex gap-2">
                         <Button
@@ -281,27 +260,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="email@exemplo.com"
-                required
-              />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Telefone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="(00) 00000-0000"
-              />
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="role">Cargo</Label>
@@ -313,7 +272,7 @@ export const UserManagement = ({ open, onOpenChange, users, onUserUpdated }: Use
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="employee">Funcionário</SelectItem>
+                  <SelectItem value="social_media">Social Media</SelectItem>
                   <SelectItem value="manager">Gerente</SelectItem>
                 </SelectContent>
               </Select>

@@ -23,7 +23,10 @@ export const TaskCalendar = ({ selectedDate, onDateSelect, tasks }: TaskCalendar
   const getTasksForDate = (date: Date) => {
     return tasks.filter(task => {
       if (!task.scheduled_date) return false;
-      const taskDate = new Date(task.scheduled_date);
+      // Corrige o problema de fuso horário ao criar a data a partir de uma string YYYY-MM-DD
+      // new Date('2023-10-26') é interpretado como UTC, o que pode causar um dia de diferença.
+      // new Date('2023/10/26') é interpretado como local.
+      const taskDate = new Date(task.scheduled_date.replace(/-/g, "/"));
       return taskDate.toDateString() === date.toDateString();
     });
   };

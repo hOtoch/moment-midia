@@ -21,14 +21,12 @@ interface Task {
   updated_at: string;
   users?: {
     name: string;
-    email: string;
   };
 }
 
 interface User {
   id: string;
   name: string;
-  email: string;
   phone: string | null;
   role: string;
 }
@@ -55,8 +53,7 @@ const Index = () => {
         .select(`
           *,
           users (
-            name,
-            email
+            name
           )
         `)
         .order('created_at', { ascending: false });
@@ -152,7 +149,10 @@ const Index = () => {
   const getTasksForDate = (date: Date) => {
     return tasks.filter(task => {
       if (!task.scheduled_date) return false;
-      const taskDate = new Date(task.scheduled_date);
+      // Corrige o problema de fuso horário ao criar a data a partir de uma string YYYY-MM-DD
+      // new Date('2023-10-26') é interpretado como UTC, o que pode causar um dia de diferença.
+      // new Date('2023/10/26') é interpretado como local.
+      const taskDate = new Date(task.scheduled_date.replace(/-/g, "/"));
       return taskDate.toDateString() === date.toDateString();
     });
   };
@@ -188,10 +188,10 @@ const Index = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-4xl font-script font-bold text-primary mb-2">
-                Mídia Moment
+                Moment Mídia
               </h1>
               <p className="text-muted-foreground">
-                Agenda de Tarefas da Relojoaria
+                Agenda de Tarefas
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">

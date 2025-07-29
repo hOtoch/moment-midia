@@ -4,7 +4,7 @@ CREATE TABLE public.users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   phone TEXT,
-  role TEXT DEFAULT 'employee',
+  role TEXT DEFAULT 'social_media',
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
@@ -84,5 +84,5 @@ EXECUTE FUNCTION public.update_updated_at_column();
 -- Inserir alguns usuários exemplo
 INSERT INTO public.users (name, email, role) VALUES
 ('Maria Silva', 'maria@moment.com', 'manager'),
-('João Santos', 'joao@moment.com', 'employee'),
-('Ana Costa', 'ana@moment.com', 'employee');
+('João Santos', 'joao@moment.com', 'social_media'),
+('Ana Costa', 'ana@moment.com', 'social_media');

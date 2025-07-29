@@ -8,45 +8,45 @@
 
 @layer base {
   :root {
-    /* Paleta principal em tons de rosa */
-    --background: 355 100% 98%;
-    --foreground: 340 87% 15%;
+    /* Paleta principal em tons de dourado e prata */
+    --background: 0 0% 98%;
+    --foreground: 45 40% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 340 87% 15%;
+    --card-foreground: 45 40% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 340 87% 15%;
+    --popover-foreground: 45 40% 25%;
 
-    --primary: 340 82% 52%;
+    --primary: 45 80% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 340 82% 65%;
+    --primary-glow: 45 80% 65%;
 
-    --secondary: 330 85% 92%;
-    --secondary-foreground: 340 87% 15%;
+    --secondary: 0 0% 85%;
+    --secondary-foreground: 45 40% 25%;
 
-    --muted: 330 85% 95%;
-    --muted-foreground: 340 45% 55%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 45 30% 45%;
 
-    --accent: 315 85% 88%;
-    --accent-foreground: 340 87% 15%;
+    --accent: 45 55% 75%;
+    --accent-foreground: 45 40% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 330 85% 90%;
-    --input: 330 85% 92%;
-    --ring: 340 82% 52%;
+    --border: 0 0% 90%;
+    --input: 0 0% 92%;
+    --ring: 45 80% 50%;
 
     /* Gradientes elegantes */
-    --gradient-primary: linear-gradient(135deg, hsl(340, 82%, 52%), hsl(315, 75%, 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(330, 85%, 95%), hsl(340, 85%, 92%));
-    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(330, 85%, 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(45, 80%, 50%), hsl(45, 70%, 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0, 4%, 78%), hsl(0, 0%, 85%));
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(0, 0%, 100%));
 
-    /* Sombras com tons de rosa */
-    --shadow-elegant: 0 10px 30px -10px hsl(340, 82%, 52%, 0.2);
-    --shadow-soft: 0 4px 20px -5px hsl(340, 82%, 52%, 0.15);
-    --shadow-glow: 0 0 40px hsl(340, 82%, 65%, 0.3);
+    /* Sombras metálicas */
+    --shadow-elegant: 0 10px 30px -10px hsla(45, 80%, 50%, 0.2);
+    --shadow-soft: 0 4px 20px -5px hsla(45, 80%, 50%, 0.15);
+    --shadow-glow: 0 0 40px hsla(45, 80%, 65%, 0.3);
 
     /* Transições suaves */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

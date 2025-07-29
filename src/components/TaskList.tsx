@@ -16,7 +16,6 @@ interface Task {
   updated_at: string;
   users?: {
     name: string;
-    email: string;
   };
 }
 

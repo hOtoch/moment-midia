@@ -34,8 +34,6 @@ import { useToast } from "@/hooks/use-toast";
 interface User {
   id: string;
   name: string;
-  email: string;
-  phone: string | null;
   role: string;
 }
 
@@ -50,7 +48,7 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    assigned_user_id: "",
+    assigned_user_id: "none",
     scheduled_date: undefined as Date | undefined,
     priority: "medium" as "low" | "medium" | "high",
   });
@@ -75,7 +73,7 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
       const { error } = await supabase.from('tasks').insert({
         title: formData.title.trim(),
         description: formData.description.trim() || null,
-        assigned_user_id: formData.assigned_user_id || null,
+        assigned_user_id: formData.assigned_user_id === "none" ? null : formData.assigned_user_id,
         scheduled_date: formData.scheduled_date ? formData.scheduled_date.toISOString().split('T')[0] : null,
         priority: formData.priority,
       });
@@ -86,16 +84,16 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
       setFormData({
         title: "",
         description: "",
-        assigned_user_id: "",
+        assigned_user_id: "none",
         scheduled_date: undefined,
         priority: "medium",
       });
 
       onTaskAdded();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Erro ao criar tarefa",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Erro desconhecido",
         variant: "destructive",
       });
     } finally {
@@ -149,7 +147,7 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
                 <SelectValue placeholder="Selecione um usuário..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nenhum responsável</SelectItem>
+                <SelectItem value="none">Nenhum responsável</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.name} ({user.role})
