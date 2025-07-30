@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CalendarIcon, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CalendarIcon, Plus, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -37,23 +37,55 @@ interface User {
   role: string;
 }
 
+interface Task {
+  id: string;
+  title: string;
+  description: string | null;
+  assigned_user_id: string | null;
+  scheduled_date: string | null;
+  priority: 'low' | 'medium' | 'high';
+}
+
 interface AddTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   users: User[];
   onTaskAdded: () => void;
+  onTaskUpdated: () => void;
+  taskToEdit: Task | null;
 }
 
-export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTaskDialogProps) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    assigned_user_id: "none",
-    scheduled_date: undefined as Date | undefined,
-    priority: "medium" as "low" | "medium" | "high",
-  });
+const initialFormData = {
+  title: "",
+  description: "",
+  assigned_user_id: "none",
+  scheduled_date: undefined as Date | undefined,
+  priority: "medium" as "low" | "medium" | "high",
+};
+
+export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded, onTaskUpdated, taskToEdit }: AddTaskDialogProps) => {
+  const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  const isEditMode = !!taskToEdit;
+
+  useEffect(() => {
+    if (open) {
+      if (isEditMode && taskToEdit) {
+        setFormData({
+          title: taskToEdit.title,
+          description: taskToEdit.description || "",
+          assigned_user_id: taskToEdit.assigned_user_id || "none",
+          // Corrige o problema de fuso horário ao criar a data a partir de uma string YYYY-MM-DD
+          scheduled_date: taskToEdit.scheduled_date ? new Date(taskToEdit.scheduled_date.replace(/-/g, "/")) : undefined,
+          priority: taskToEdit.priority,
+        });
+      } else {
+        setFormData(initialFormData);
+      }
+    }
+  }, [open, taskToEdit, isEditMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,29 +102,32 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
     setLoading(true);
 
     try {
-      const { error } = await supabase.from('tasks').insert({
+      const taskData = {
         title: formData.title.trim(),
         description: formData.description.trim() || null,
         assigned_user_id: formData.assigned_user_id === "none" ? null : formData.assigned_user_id,
         scheduled_date: formData.scheduled_date ? formData.scheduled_date.toISOString().split('T')[0] : null,
         priority: formData.priority,
-      });
+      };
 
-      if (error) throw error;
-
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        assigned_user_id: "none",
-        scheduled_date: undefined,
-        priority: "medium",
-      });
-
-      onTaskAdded();
+      if (isEditMode && taskToEdit) {
+        const { error } = await supabase
+          .from('tasks')
+          .update(taskData)
+          .eq('id', taskToEdit.id);
+        if (error) throw error;
+        onTaskUpdated();
+      } else {
+        const { error } = await supabase.from('tasks').insert(taskData);
+        if (error) throw error;
+        onTaskAdded();
+      }
+      
+      // O formulário será resetado pelo useEffect quando o diálogo for fechado/reaberto.
+      
     } catch (error) {
       toast({
-        title: "Erro ao criar tarefa",
+        title: isEditMode ? "Erro ao atualizar tarefa" : "Erro ao criar tarefa",
         description: error instanceof Error ? error.message : "Erro desconhecido",
         variant: "destructive",
       });
@@ -101,16 +136,27 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
     }
   };
 
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'manager':
+        return 'Gerente';
+      case 'social_media':
+        return 'Social Media';
+      default:
+        return role;
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5" />
-            Nova Tarefa
+          <DialogTitle className="flex items-center gap-2">            
+            {isEditMode ? <Edit className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+            {isEditMode ? "Editar Tarefa" : "Nova Tarefa"}
           </DialogTitle>
           <DialogDescription>
-            Adicione uma nova tarefa à agenda da relojoaria.
+            {isEditMode ? "Altere os detalhes da tarefa abaixo." : "Adicione uma nova tarefa à agenda da relojoaria."}
           </DialogDescription>
         </DialogHeader>
         
@@ -150,7 +196,7 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
                 <SelectItem value="none">Nenhum responsável</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
-                    {user.name} ({user.role})
+                    {user.name} ({getRoleLabel(user.role)})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -227,7 +273,7 @@ export const AddTaskDialog = ({ open, onOpenChange, users, onTaskAdded }: AddTas
               Cancelar
             </Button>
             <Button type="submit" disabled={loading} variant="elegant">
-              {loading ? "Criando..." : "Criar Tarefa"}
+              {loading ? (isEditMode ? "Salvando..." : "Criando...") : (isEditMode ? "Salvar Alterações" : "Criar Tarefa")}
             </Button>
           </DialogFooter>
         </form>

@@ -35,9 +35,10 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [tasks, setTasks] = useState<Task[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [showAddTask, setShowAddTask] = useState(false);
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { toast } = useToast();
 
   // Carregar dados iniciais
@@ -91,11 +92,31 @@ const Index = () => {
 
   const handleTaskAdded = () => {
     loadTasks();
-    setShowAddTask(false);
+    setIsTaskDialogOpen(false);
     toast({
       title: "Tarefa criada",
       description: "A tarefa foi adicionada com sucesso!",
     });
+  };
+
+  const handleTaskUpdated = () => {
+    loadTasks();
+    setIsTaskDialogOpen(false);
+    setEditingTask(null);
+    toast({
+      title: "Tarefa atualizada",
+      description: "A tarefa foi atualizada com sucesso!",
+    });
+  };
+
+  const handleOpenAddDialog = () => {
+    setEditingTask(null);
+    setIsTaskDialogOpen(true);
+  };
+
+  const handleOpenEditDialog = (task: Task) => {
+    setEditingTask(task);
+    setIsTaskDialogOpen(true);
   };
 
   const handleUserUpdated = () => {
@@ -284,6 +305,7 @@ const Index = () => {
                     tasks={getTasksForDate(selectedDate)}
                     onToggleComplete={toggleTaskCompletion}
                     onDelete={deleteTask}
+                    onEdit={handleOpenEditDialog}
                   />
                 </CardContent>
               </Card>
@@ -299,6 +321,7 @@ const Index = () => {
                   tasks={getUnscheduledTasks()}
                   onToggleComplete={toggleTaskCompletion}
                   onDelete={deleteTask}
+                  onEdit={handleOpenEditDialog}
                 />
               </CardContent>
             </Card>
@@ -308,10 +331,12 @@ const Index = () => {
 
       {/* Dialogs */}
       <AddTaskDialog
-        open={showAddTask}
-        onOpenChange={setShowAddTask}
+        open={isTaskDialogOpen}
+        onOpenChange={setIsTaskDialogOpen}
         users={users}
         onTaskAdded={handleTaskAdded}
+        onTaskUpdated={handleTaskUpdated}
+        taskToEdit={editingTask}
       />
 
       <UserManagement

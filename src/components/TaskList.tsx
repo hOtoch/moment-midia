@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Trash2, User, AlertCircle } from "lucide-react";
+import { CheckCircle2, Circle, Trash2, User, AlertCircle, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,7 @@ interface TaskListProps {
   tasks: Task[];
   onToggleComplete: (taskId: string, completed: boolean) => void;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }
 
 const getPriorityColor = (priority: string) => {
@@ -51,7 +52,7 @@ const getPriorityLabel = (priority: string) => {
   }
 };
 
-export const TaskList = ({ tasks, onToggleComplete, onDelete }: TaskListProps) => {
+export const TaskList = ({ tasks, onToggleComplete, onDelete, onEdit }: TaskListProps) => {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -95,6 +96,14 @@ export const TaskList = ({ tasks, onToggleComplete, onDelete }: TaskListProps) =
                     <Badge variant="secondary" className={getPriorityColor(task.priority)}>
                       {getPriorityLabel(task.priority)}
                     </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 p-0 text-muted-foreground hover:text-primary"
+                      onClick={() => onEdit(task)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
